@@ -236,7 +236,11 @@ class Contact{
         printf("Error %s. \n", $stmt->error);
         return false;
     }
-
+    /**
+     * Delete a specified contact
+     * @return bool true if is was successfully deleted
+     * @return bool false if is was not deleted
+     * */
     public function delete(){
         // Query
         $sql = 'DELETE FROM ' . $this->table . ' WHERE userid = :userid AND id = :cid';
