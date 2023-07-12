@@ -208,11 +208,20 @@ class Contact{
         // clean data
         $this->nome        =  htmlspecialchars(strip_tags($this->nome));
         $this->sobrenome   =  htmlspecialchars(strip_tags($this->sobrenome));
-        $this->telefone    =  htmlspecialchars(strip_tags($this->telefone));
-        $this->whatsapp    =  htmlspecialchars(strip_tags($this->whatsapp));
         $this->email       =  htmlspecialchars(strip_tags($this->email));
         $this->userid      =  htmlspecialchars(strip_tags($this->userid));
         $this->id          =  htmlspecialchars(strip_tags($this->id));
+
+        if($this->validate_tel($this->telefone)){
+            $this->telefone =  htmlspecialchars(strip_tags($this->telefone));
+        }else{
+            false;
+        }
+        if($this->validate_tel($this->whatsapp)){
+            $this->whatsapp =  htmlspecialchars(strip_tags($this->whatsapp));
+        }else{
+            return false;  
+        }
 
         // Bind param
         $stmt->bindParam(':nome', $this->nome);
