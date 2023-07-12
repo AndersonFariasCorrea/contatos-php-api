@@ -10,6 +10,9 @@
     // Intanciates contact
     $contact = new Contact($DB);
 
+    // Add uset auth here
+    $contact->userid = isset($_GET['userid']) ? $_GET['userid'] : exit(http_response_code(401));
+
     // Blog contact query
     $result = $contact->list();
 
@@ -23,6 +26,7 @@
         while($row = $result->fetch(PDO::FETCH_ASSOC)){
             extract($row);
             $contact_item = array(
+                'username' => $username,
                 'id' => $id,
                 'nome' => $nome,
                 'sobrenome' => $sobrenome,
