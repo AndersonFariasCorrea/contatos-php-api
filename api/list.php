@@ -11,7 +11,7 @@
     $contact = new Contact($DB);
 
     // Add uset auth here
-    $contact->userid = isset($_GET['userid']) ? $_GET['userid'] : exit(http_response_code(401));
+    $contact->userid = isset($_GET['userid']) && preg_match("/\d/", $_GET['userid']) ? $_GET['userid'] : exit(http_response_code(401));
 
     // Blog contact query
     $result = $contact->list();

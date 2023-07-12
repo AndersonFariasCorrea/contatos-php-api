@@ -16,6 +16,7 @@ class Contact{
     public $whatsapp;
     public $email;
     public $userid;
+    public $username;
     public $created_at;
 
     // Constructor with db conn
@@ -25,7 +26,6 @@ class Contact{
 
     /**
      * Gets contacts from database
-     * @param none
      * @return object query result
      * */
     public function list(){
@@ -54,11 +54,72 @@ class Contact{
         $stmt->bindParam(1, $this->userid);
         
         // Execute query
-        $stmt->execute(); 
+        $stmt->execute();
 
         return $stmt;
     }
 
+    /**
+     * Gets contacts from database
+     * @return object query result
+     * */
+    public function list_one(){
+        // Query
+        $sql = 'SELECT
+            user.id as userid,
+            user.nome as username,
+            c.id,
+            c.nome,
+            c.sobrenome,
+            c.telefone,
+            c.whatsapp,
+            c.email,
+            c.created_at 
+            FROM 
+            '.$this->table.' c 
+            LEFT JOIN 
+                user ON user.id = c.userid
+                WHERE user.id = :userid AND c.id = :cid
+            ORDER BY c.nome DESC;';
+
+        // Prepare statement
+        $stmt = $this->conn->prepare($sql);
+
+        // clean data
+        $this->id =  htmlspecialchars(strip_tags($this->id));
+        $this->userid =  htmlspecialchars(strip_tags($this->userid));
+
+        // Bind param
+        $stmt->bindParam(':cid', $this->id);
+        $stmt->bindParam(':userid', $this->userid);
+
+        // Execute query
+        $stmt->execute();
+
+        // Fecth row
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if($stmt->rowCount() > 0){
+            // Add the value to the public class propeties
+            $this->username     = $row['username'];
+            $this->id           = $row['id'];
+            $this->nome         = $row['nome'];
+            $this->sobrenome    = $row['sobrenome'];
+            $this->telefone     = $row['telefone'];
+            $this->whatsapp     = $row['whatsapp'];
+            $this->email        = $row['email'];
+            $this->created_at   = $row['created_at'];
+            return ['status'=>1];
+        }
+        return ['status'=>0,'msg'=>'no data was found'];    
+    }
+
+    /**
+     * Validades if the email follows a allowed pattern
+     * @param string $email
+     * @return true the email is valid
+     * @return false the email is not valid
+     * */
     private function validade_email(string $email){
         $email_pattern = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/';
         if(preg_match($email_pattern, $email)){
@@ -66,20 +127,33 @@ class Contact{
         }
         return false;
     }
-    private function validate_tel(string $telefone){
+    /**
+     * Validades if the phone number follows a allowed pattern
+     * @param string $telefone
+     * @return true the phone numbeer is valid
+     * @return false the phone number is not valid
+     * */
+    private function validate_tel(string $phonenumber){
         $tel_pattern = "/(^(\+\d{1,3})(\(\d{1,3}\))(\d{8,9})$|^(\d{1,3})(\(\d{1,3}\))(\d{8,9})$|^(\+\d{1,3})(\d{1,3})(\d{8,9})$|^(\d{1,3})(\d{1,3})(\d{8,9})$|^(\(\d{1,3}\))(\d{1,9})$|^(\d{1,3})(\d{1,9})$)/";
-        if(preg_match($tel_pattern, $telefone)){
+        if(preg_match($tel_pattern, $phonenumber)){
             return true;
         }
         return false;
     }
 
+    /**
+     * Create a new contact
+     * @param none
+     * @return true a new contact was created
+     * @return false the contact was not created
+     * */
     public function create(){
         // Query
         $sql = 'INSERT INTO ' .$this->table. ' SET nome = :nome, sobrenome = :sobrenome, telefone = :telefone, whatsapp = :whatsapp, email = :email, userid = :userid';
         // Prepare statement
         $stmt = $this->conn->prepare($sql);
-        // clean data
+
+        // clean and validate data
         $this->nome =  htmlspecialchars(strip_tags($this->nome));
         $this->sobrenome =  htmlspecialchars(strip_tags($this->sobrenome));
 
@@ -115,8 +189,10 @@ class Contact{
         }
 
         // Error Handle
-        printf("Error %s. \n", $stmt->error);
+        log_error("Error %s. \n", $stmt->error);
         return false;
     }
+
+    
 
 }
