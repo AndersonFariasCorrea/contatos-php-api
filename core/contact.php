@@ -237,5 +237,33 @@ class Contact{
         return false;
     }
 
+    public function delete(){
+        // Query
+        $sql = 'DELETE FROM ' . $this->table . ' WHERE userid = :userid AND id = :cid';
 
+        // Prepare statment
+        $stmt = $this->conn->prepare($sql);
+
+        // Parse data
+        $this->userid =  htmlspecialchars(strip_tags($this->userid));
+        $this->id     =  htmlspecialchars(strip_tags($this->id));
+
+        // Bind param
+        $stmt->bindParam(':userid', $this->userid);
+        $stmt->bindParam(':cid', $this->id);
+
+        // Execute query
+        $stmt->execute();
+
+        // Verify is it was well succeed
+        if($stmt->rowCount() > 0){
+            return true;
+        }else{
+            return false;
+        }
+
+        // Error Handle
+        printf("Error %s. \n", $stmt->error);
+        return false;
+    }
 }
