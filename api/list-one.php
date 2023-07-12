@@ -10,7 +10,7 @@
     // Intanciates post
     $contact = new Contact($DB);
 
-    // Validade and set searched contact id
+    // Validate and set searched contact id
     $contact->id = isset($_GET['cid']) && preg_match("/\d/", $_GET['cid']) ? $_GET['cid'] : exit(http_response_code(400));
 
     // Add uset auth here

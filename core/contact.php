@@ -115,12 +115,12 @@ class Contact{
     }
 
     /**
-     * Validades if the email follows a allowed pattern
+     * Validates if the email follows a allowed pattern
      * @param string $email
      * @return true the email is valid
      * @return false the email is not valid
      * */
-    private function validade_email(string $email){
+    private function validates_email(string $email){
         $email_pattern = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/';
         if(preg_match($email_pattern, $email)){
             return true;
@@ -128,7 +128,7 @@ class Contact{
         return false;
     }
     /**
-     * Validades if the phone number follows a allowed pattern
+     * Validates if the phone number follows a allowed pattern
      * @param string $telefone
      * @return true the phone numbeer is valid
      * @return false the phone number is not valid
@@ -169,7 +169,7 @@ class Contact{
             return ["error"=> "WhatsApp", "msg"=> "número WhatsApp não é válido"];  
         }
 
-        if($this->validade_email($this->email)){
+        if($this->validates_email($this->email)){
             $this->email =  htmlspecialchars(strip_tags($this->email));
         }else{
             return ["error"=> "email", "msg"=> "email não é válido"];
@@ -193,6 +193,49 @@ class Contact{
         return false;
     }
 
-    
+    /**
+     * Updates contacts from database
+     * @return bool true if query executes correctly
+     * @return bool false if query runs an error
+     * */
+    public function update(){
+        // Query
+        $sql = 'UPDATE ' .$this->table. ' 
+            SET nome = :nome, sobrenome = :sobrenome, telefone = :telefone, whatsapp = :whatsapp, email = :email
+            WHERE userid = :userid AND id = :cid';
+        // Prepare statement
+        $stmt = $this->conn->prepare($sql);
+        // clean data
+        $this->nome        =  htmlspecialchars(strip_tags($this->nome));
+        $this->sobrenome   =  htmlspecialchars(strip_tags($this->sobrenome));
+        $this->telefone    =  htmlspecialchars(strip_tags($this->telefone));
+        $this->whatsapp    =  htmlspecialchars(strip_tags($this->whatsapp));
+        $this->email       =  htmlspecialchars(strip_tags($this->email));
+        $this->userid      =  htmlspecialchars(strip_tags($this->userid));
+        $this->id          =  htmlspecialchars(strip_tags($this->id));
+
+        // Bind param
+        $stmt->bindParam(':nome', $this->nome);
+        $stmt->bindParam(':sobrenome', $this->sobrenome);
+        $stmt->bindParam(':telefone', $this->telefone);
+        $stmt->bindParam(':whatsapp', $this->whatsapp);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(':userid', $this->userid);
+        $stmt->bindParam(':cid', $this->id);
+
+        // Execute query
+        $stmt->execute();
+
+        if($stmt->rowCount() > 0){
+            return true;
+        }else{
+            return false;
+        }
+
+        // Error Handle
+        printf("Error %s. \n", $stmt->error);
+        return false;
+    }
+
 
 }
