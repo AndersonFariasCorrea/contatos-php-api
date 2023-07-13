@@ -1,5 +1,10 @@
 <?php
 
+if ($_SERVER['REQUEST_METHOD'] != 'DELETE') {
+    // Access is not allowed
+    header('HTTP/1.0 403 Forbidden');
+    exit;
+}else{
     // Headers
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
@@ -26,3 +31,4 @@
     }else{
         echo json_encode(['status'=> 0, 'msg' => 'contact was not deleted']);
     }
+}

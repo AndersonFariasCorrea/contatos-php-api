@@ -1,5 +1,10 @@
 <?php
 
+if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+    // Access is not allowed
+    header('HTTP/1.0 403 Forbidden');
+    exit;
+}else{
     // Headers
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
@@ -37,9 +42,11 @@
             );
             array_push($contact_arr['data'], $contact_item);          
         }
+        $contact_arr['query'] = ['rows_count'=> $num];
         // Convert to Json  and output
         echo json_encode($contact_arr);
     }else{
        echo json_encode(['msg' => 'No contacts found', 'rows_count'=> $num]);
     }
-    exit(http_response_code(200));
+    exit(http_response_code());
+}

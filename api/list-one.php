@@ -1,5 +1,10 @@
 <?php
 
+if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+    // Access is not allowed
+    header('HTTP/1.0 403 Forbidden');
+    exit;
+}else{
     // Headers
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
@@ -21,7 +26,7 @@
 
     // Verify if anything was found 
     if(isset($result['status']) && $result['status'] === 0){
-        http_response_code(200);
+        http_response_code();
         exit(json_encode($result));
     }
 
@@ -37,4 +42,5 @@
     );
 
     echo json_encode($contact_item);
-    exit(http_response_code(200));
+    exit(http_response_code());
+}

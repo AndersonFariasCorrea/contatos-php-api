@@ -1,5 +1,9 @@
 <?php
-
+if ($_SERVER['REQUEST_METHOD'] != 'PUT') {
+    // Access is not allowed
+    header('HTTP/1.0 403 Forbidden');
+    exit;
+}else{
     // Headers
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
@@ -22,41 +26,52 @@
         return json_encode($msg);
     }
 
+    $sit = 0;
+    $userSit = 0;
+
     if(!isset($data->userid)){
         echo data_msg_error('userid');
-        exit(http_response_code(401));
+        $userSit++;
     }
     if(!isset($data->nome)){
         echo data_msg_error('nome');
-        exit(http_response_code(400));
+        $sit++;
     }
     if(!isset($data->sobrenome)){
         echo data_msg_error('sobrenome');
-        exit(http_response_code(400));
+        $sit++;
     }
     if(!isset($data->telefone)){
         echo data_msg_error('telefone');
-        exit(http_response_code(400));
+        $sit++;
     }
     if(!isset($data->whatsapp)){
         echo data_msg_error('whatsapp');
-        exit(http_response_code(400));
+        $sit++;
     }
     if(!isset($data->email)){
         echo data_msg_error('email');
+        $sit++;
+    }
+    
+    if($sit > 0){
         exit(http_response_code(400));
-    }
-
-    $contact->nome = $data->nome;
-    $contact->sobrenome = $data->sobrenome;
-    $contact->telefone = $data->telefone;
-    $contact->whatsapp = $data->whatsapp;
-    $contact->email = $data->email;
-    $contact->userid = $data->userid;
-
-    //create contact
-    if($contact->create()){
-        echo json_encode(['status'=> 1, 'msg' => 'contato criado com sucesso']);
+    }else if($userSit > 0){
+        exit(http_response_code(401));
     }else{
-        echo json_encode(['status'=> 0, 'msg' => 'contato não foi criado']);
+        $contact->nome = $data->nome;
+        $contact->sobrenome = $data->sobrenome;
+        $contact->telefone = $data->telefone;
+        $contact->whatsapp = $data->whatsapp;
+        $contact->email = $data->email;
+        $contact->userid = $data->userid;
+
+        //create contact
+        if($contact->create()){
+            echo json_encode(['status'=> 1, 'msg' => 'contato criado com sucesso']);
+        }else{
+            echo json_encode(['status'=> 0, 'msg' => 'contato não foi criado']);
+        }
+        exit(http_response_code());
     }
+}
