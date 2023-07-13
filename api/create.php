@@ -23,34 +23,36 @@ if ($_SERVER['REQUEST_METHOD'] != 'PUT') {
             'status' => 0,
             'msg' => "error: $error não é válido"
         );
-        return json_encode($msg);
+        return ($msg);
     }
 
     $sit = 0;
     $userSit = 0;
+    $errorMsg = array();
+    $errorMsg['error'] = null;
 
-    if(!isset($data->userid)){
-        echo data_msg_error('userid');
+    if(!isset($data->userid) || intval($data->userid) <= 0){
+        array_push($errorMsg['error'], data_msg_error('userid'));
         $userSit++;
     }
-    if(!isset($data->nome)){
-        echo data_msg_error('nome');
+    if(!isset($data->nome) || strlen($data->nome) < 2){
+        array_push($errorMsg['error'], data_msg_error('nome'));
         $sit++;
     }
     if(!isset($data->sobrenome)){
-        echo data_msg_error('sobrenome');
+        array_push($errorMsg['error'], data_msg_error('sobrenome'));
         $sit++;
     }
-    if(!isset($data->telefone)){
-        echo data_msg_error('telefone');
+    if(!isset($data->telefone) || strlen($data->telefone) < 7){
+        array_push($errorMsg['error'], data_msg_error('telefone'));
         $sit++;
     }
     if(!isset($data->whatsapp)){
-        echo data_msg_error('whatsapp');
+        array_push($errorMsg['error'], data_msg_error('whatsapp'));
         $sit++;
     }
     if(!isset($data->email)){
-        echo data_msg_error('email');
+        array_push($errorMsg['error'], data_msg_error('email'));
         $sit++;
     }
     
@@ -67,11 +69,14 @@ if ($_SERVER['REQUEST_METHOD'] != 'PUT') {
         $contact->userid = $data->userid;
 
         //create contact
-        if($contact->create()){
-            echo json_encode(['status'=> 1, 'msg' => 'contato criado com sucesso']);
+        $result = $contact->create();
+        if($result['status'] === 1){
+            echo json_encode($result);
+        }else if($result['status'] === 0){
+            echo json_encode($result);
         }else{
-            echo json_encode(['status'=> 0, 'msg' => 'contato não foi criado']);
+            echo json_encode(['status'=> 500, 'msg' => 'ocorreu um erro interno']);
+            exit(http_response_code(500));
         }
-        exit(http_response_code());
     }
 }

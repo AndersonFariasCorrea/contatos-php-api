@@ -159,20 +159,20 @@ class Contact{
 
         if($this->validateTel($this->telefone)){
             $this->telefone =  htmlspecialchars(strip_tags($this->telefone));
-        }else{
-            return ["error"=> "número", "msg"=> "número não é válido"];
+        }else if(! empty($this->telefone)){
+            return ["status"=> 0, "msg"=> "número não é válido"];
         }
         
         if($this->validateTel($this->whatsapp)){
             $this->whatsapp =  htmlspecialchars(strip_tags($this->whatsapp));
-        }else{
-            return ["error"=> "WhatsApp", "msg"=> "número WhatsApp não é válido"];  
+        }else if(! empty($this->whatsapp)){
+            return ["status"=> 0, "msg"=> "whatsapp não é válido"];
         }
 
         if($this->validateEmail($this->email)){
             $this->email =  htmlspecialchars(strip_tags($this->email));
-        }else{
-            return ["error"=> "email", "msg"=> "email não é válido"];
+        }else if(! empty($this->email)){
+            return ["status"=> 0, "msg"=> "email não é válido"];
         }
 
         // Bind param
@@ -185,7 +185,7 @@ class Contact{
 
         // Execute query
         if($stmt->execute()){
-            return true;
+            return ['status'=> 1, 'msg' => 'contato criado com sucesso'];
         }
 
         // Error Handle

@@ -28,34 +28,7 @@
     <?php if ($auth["logged"]) : echo "<span id=\"userid\" style=\"display:none;\">{$auth['userid']}</span>\n"?>
         <div class="popup-form text-center">
             <div class="popup-form-content">
-                <h1 class="pt-2 fw-bold action-name">Action</h1>
-                <div class="app-area"></div>
-                <form class="presentationForm mt-2">
-                    <label for="first-name"></label>
-                    <input class="form-control" type="text" id="first-name" name="firstname" pattern="/^[0-9a-zA-Zá-ú\s]+$/" title="Nome" placeholder="Nome *" required>
-
-                    <label for="last-name"></label>
-                    <input class="form-control" type="text" id="last-name" name="lastname" pattern="/^[0-9a-zA-Zá-ú\s]+$/" title="Sobrenome" placeholder="Sobrenome">
-                    
-
-                    <label for="phone"></label>
-                    <input class="form-control" type="tel" id="phone" name="phone" pattern="\+\d{1,14}" placeholder="Celular: +55 (99) 9 9999-9999 / (99) 9 9999-9999 *" required>
-
-                    <label for="whatsapp"></label>
-                    <input class="form-control" type="tel" id="whatsapp" name="phone" pattern="\+\d{1,14}" placeholder="WhatsApp: +55 (99) 9 9999-9999 / (99) 9 9999-9999">
-
-                    <label for="email"></label>
-                    <input class="form-control" type="email" id="email" name="email" placeholder="Email">
-
-                    <div class="row mt-5">
-                        <div class="col">
-                            <button type="submit" class="submit-contact-action btn btn-primary w-100">Salvar</button>
-                        </div>
-                        <div class="col">
-                            <button type="button" class="cancel-contact-action btn btn-danger w-100">Cancelar</button>
-                        </div>
-                    </div>
-                </form>
+                
             </div>
         </div>
         <script src="./public/js/bootstrap.js"></script>
