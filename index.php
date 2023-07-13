@@ -27,41 +27,8 @@
 <body>
     <?php if ($auth["logged"]) : echo "<span id=\"userid\" style=\"display:none;\">{$auth['userid']}</span>\n"?>
         <div class="popup-form">
-            
             <div class="popup-form-content">
-                <h1 class="pt-2 fw-bold action-name text-center">Contatos</h1>
-                <div class="row">
-                    <div class="col-11">
-                        <div class="input-icons">
-                            <i class="fa-solid fa-magnifying-glass icon"></i>
-                            <input type="email" class="form-control input-fild pesquisa" id="InputEmail" name="fullname"  attern="^[0-9a-zA-Zá-ú\s]+$" aria-describedby="fullnameHelp" placeholder="Pesquisar...">
-                        </div>
-                    </div>
-                    <div class="col dropdown-button">
-                        <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Novo contato</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th class="w-75">Nome</th>
-                            <th>#</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Fulano</td>
-                            <td><i class="fa-regular fa-eye"></i></td>
-                        </tr>
-                    </tbody>
-                </table>
+                
             </div>
         </div>
         <script src="./public/js/bootstrap.js"></script>

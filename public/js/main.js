@@ -100,17 +100,77 @@ function viewContacts(){
         }`);
         $('head').append(styles);
 
-        function listContacts(){
+        function listContacts(areaAppend, seach = ''){
+            let areaToAppend = $(areaAppend)
+            if(areaToAppend.length > 0){
+                $('tbody').remove();
+                let mainScreen = `<h1 class="pt-2 fw-bold action-name text-center">Contatos</h1>
+                <div class="row">
+                    <div class="col-11">
+                        <div class="input-icons">
+                            <i class="fa-solid fa-magnifying-glass icon"></i>
+                            <input type="email" class="form-control input-fild pesquisa" id="InputEmail" name="fullname"  attern="^[0-9a-zA-Zá-ú\s]+$" aria-describedby="fullnameHelp" placeholder="Pesquisar...">
+                        </div>
+                    </div>
+                    <div class="col dropdown-button">
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Novo contato</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="w-75">Nome</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>`;
+
+                areaToAppend.append(mainScreen);
+
+                let u = $('#userid').text();
+
+                $.ajax({
+                    url: `${domainProtol}//${domainName}/contatos/api/list.php?userid=${u}&cid=${seach}`,
+                    method: 'GET'
+                }).done(function(result){
+                    let count = result.query.rows_count;
+                    result.data.forEach(el => {
+                        console.log(el.nome);
+                        var row = $('<tr>');
+                            var nomeCol = $('<td>').text(el.nome + ' ' + el.sobrenome);
+                            row.append(nomeCol);
+                            var nomeCol = $('<td>').html(`<a href="#" onclick="viewContact(${el.id})"><i class="fa-regular fa-eye"></i></a>`);
+                            row.append(nomeCol);
+                        $('tbody').append(row);
+                    });
+                }).fail(function(jqXHR, textStatus, errorThrown){
+                    console.error('An error occurred, errorThrown:', errorThrown);
+                    console.error('An error occurred, status:', textStatus);
+                    console.error('An error occurred, jqXHR:', jqXHR);
+                });
+
+            }
             
         }
 
+        listContacts(".popup-form-content");
+        
         $('.pesquisa').on('input change', function(){
-            console.log($(this).val());
+            listContacts(".popup-form-content", $(this).val());
         });
         
 }
 
-function appedCreateContactFrom(areaToAppend){
+function appendCreateContactFrom(areaToAppend){
     let createNewContactForm = `<h1 class="pt-2 fw-bold action-name">Novo contato</h1>
     <form class="presentationForm mt-2">
         <label for="first-name"></label>
@@ -118,7 +178,6 @@ function appedCreateContactFrom(areaToAppend){
 
         <label for="last-name"></label>
         <input class="form-control" type="text" id="last-name" name="lastname" pattern="^[0-9a-zA-Zá-ú\s]+$" title="Sobrenome" placeholder="Sobrenome">
-        
 
         <label for="phone"></label>
         <input class="form-control" type="tel" id="phone" name="phone" pattern="+\d{1,14}" placeholder="Celular: +55 (99) 9 9999-9999 / (99) 9 9999-9999 *" required>
@@ -141,12 +200,13 @@ function appedCreateContactFrom(areaToAppend){
 
     $(areaToAppend).html(createNewContactForm);
 }
+
 function newContact(areaAppend){
     let areaToAppend = $(areaAppend)
     if(areaToAppend.length > 0){
 
         // would it be using doom? yep, but i decided not
-        appedCreateContactFrom(areaToAppend);
+        appendCreateContactFrom(areaToAppend);
     
         $('.submit-contact-action').on("click", ()=>{
             let n = $('#first-name').val();
@@ -221,6 +281,6 @@ function newContact(areaAppend){
         console.log('the area to append the form is invalid');
     }
 }
-
+//appendCreateContact
 //newContact(".popup-form-content");
 viewContacts();
