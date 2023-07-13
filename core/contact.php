@@ -44,7 +44,7 @@ class Contact{
             LEFT JOIN 
                 user ON user.id = c.userid
                 WHERE user.id = :userid AND c.nome LIKE :cnome
-            ORDER BY c.nome DESC;';
+            ORDER BY c.nome ASC;';
 
         // Prepare statement
         $stmt = $this->conn->prepare($sql);
