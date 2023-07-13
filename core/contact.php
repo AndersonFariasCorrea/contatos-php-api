@@ -23,9 +23,8 @@ class Contact{
     public function __construct(Object $db){
         $this->conn = $db;
     }
-
     /**
-     * Gets contacts from database
+     * Gets contacts from database by string starting
      * @return object query result
      */
     public function list(){
@@ -44,14 +43,16 @@ class Contact{
             '.$this->table.' c 
             LEFT JOIN 
                 user ON user.id = c.userid
-                WHERE user.id = ?
+                WHERE user.id = :userid AND c.nome LIKE :cnome
             ORDER BY c.nome DESC;';
 
         // Prepare statement
         $stmt = $this->conn->prepare($sql);
 
         // Bind param
-        $stmt->bindParam(1, $this->userid);
+        $seach = $this->nome . '%';
+        $stmt->bindParam(':cnome', $seach);
+        $stmt->bindParam(':userid', $this->userid);
         
         // Execute query
         $stmt->execute();

@@ -66,10 +66,52 @@ function verifyRequiredInputs() {
     });
 }
 
+function viewContacts(){
+    let styles = $('<style>')
+        .text(`
+        .input-icons i {
+            position: absolute;
+        }
+        .icon {
+            padding: 10px;
+            min-width: 40px;
+        }
+        .input-icons {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .input-fild{
+            text-align: left;
+            padding-left: 35px;
+        }
+        .dropdown-button{
+            height: 38px;
+        }
+        .dropdown-button i{
+            padding: 0px 4px;
+            position: relative;
+            bottom: -6px;
+        }
+        .dropdown-button i:hover{
+            cursor: pointer;
+        }
+        .dropdown a::after{
+            content: none !important;
+        }`);
+        $('head').append(styles);
 
+        function listContacts(){
+            
+        }
+
+        $('.pesquisa').on('input change', function(){
+            console.log($(this).val());
+        });
+        
+}
 
 function appedCreateContactFrom(areaToAppend){
-    let createNewContactForm = `<h1 class="pt-2 fw-bold action-name">Action</h1>
+    let createNewContactForm = `<h1 class="pt-2 fw-bold action-name">Novo contato</h1>
     <form class="presentationForm mt-2">
         <label for="first-name"></label>
         <input class="form-control" type="text" id="first-name" name="firstname" pattern="^[0-9a-zA-Zá-ú\s]+$" title="Nome" placeholder="Nome *" required>
@@ -133,7 +175,7 @@ function newContact(areaAppend){
                 }).done(function(result){
                     $('.loaderIcon').remove();
                     if(result.status === 1){
-                        $(areaToAppend).html(`<h1 class="pt-2 fw-bold">Erro</h1><img class="check" src="./public/img/check-correct.gif" alt="check-right" style="width:150px; margin-top: 2%;"><div class="response"></div><span"><p>${result.msg}</p></span>
+                        $(areaToAppend).html(`<h1 class="pt-2 fw-bold">Salvo</h1><img class="check" src="./public/img/check-correct.gif" alt="check-right" style="width:150px; margin-top: 2%;"><div class="response"></div><span"><p>${result.msg}</p></span>
                             <div class="row mt-5">
                                 <div class="col">
                                     <button type="button" class="submit-contact-action btn btn-primary w-100" onclick="newContact('.popup-form-content')">Criar novo</button>
@@ -180,4 +222,5 @@ function newContact(areaAppend){
     }
 }
 
-newContact(".popup-form-content");
+//newContact(".popup-form-content");
+viewContacts();

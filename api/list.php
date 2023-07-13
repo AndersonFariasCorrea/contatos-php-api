@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'GET') {
 
     // Add uset auth here
     $contact->userid = isset($_GET['userid']) && preg_match("/\d/", $_GET['userid']) ? $_GET['userid'] : exit(http_response_code(401));
+    $contact->nome = isset($_GET['stwith']) && preg_match("/^[0-9a-zA-Zá-ú\s]+$/", $_GET['stwith']) ? $_GET['stwith'] : '';
 
     // Blog contact query
     $result = $contact->list();
