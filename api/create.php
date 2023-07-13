@@ -2,7 +2,7 @@
 if ($_SERVER['REQUEST_METHOD'] != 'PUT') {
     // Access is not allowed
     header('HTTP/1.0 403 Forbidden');
-    exit;
+    exit(json_encode(['status'=>0, 'msg'=>'method not allowed']));
 }else{
     // Headers
     header('Access-Control-Allow-Origin: *');
