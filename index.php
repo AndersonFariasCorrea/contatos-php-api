@@ -31,9 +31,15 @@
                 
             </div>
         </div>
+        <div class="fullscreen-container">
+            <div id="alert">
+                <div class="alert-content"></div>
+                
+            </div>
+        </div>
         <script src="./public/js/bootstrap.js"></script>
         <script src="./public/js/jquery.min.js"></script>
-        <script src="./public/js/main.js" Content-Type: application/javascript></script>   
+        <script src="./public/js/main.js" Content-Type: application/javascript></script>
     <?php else : ?>
         <div class="container mt-5">
             <div class="row">

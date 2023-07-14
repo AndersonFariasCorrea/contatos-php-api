@@ -27,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'DELETE') {
 
     //create contact
     if($contact->delete()){
-        echo json_encode(['status'=> 1, 'msg' => 'contact deleted successfully']);
+        echo json_encode(['status'=> 1, 'msg' => 'Contato deletado com sucesso']);
     }else{
-        echo json_encode(['status'=> 0, 'msg' => 'contact was not deleted']);
+        echo json_encode(['status'=> 0, 'msg' => 'O contato não foi deletado']);
     }
 }

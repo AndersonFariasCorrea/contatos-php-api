@@ -167,6 +167,10 @@ function viewContacts(){
                             &nbsp;
                             <a href="#" onclick="editContact(${el.id})" title="editar contato">
                                 <i class="fa-regular fa-pen-to-square"></i>
+                            </a>
+                            &nbsp;
+                            <a href="#" onclick="deleteContact(${el.id})" title="editar contato">
+                                <i class="fa-solid fa-trash"></i>
                             </a>`)
                             .addClass('text-center');
                             row.append(nomeCol);
@@ -376,7 +380,7 @@ function editContact(cid){
             if (reg.test(u) && reg.test(cid)) {
                 popUpWait(areaToAppend);
                 $('.submit-contact-action').css("display", "none");
-                var ipdatedContactData = {
+                var updatedContactData = {
                     nome:n,
                     sobrenome:s,
                     telefone:p,
@@ -388,7 +392,7 @@ function editContact(cid){
                 $.ajax({
                     url:`${domainProtol}//${domainName}/contatos/api/update.php`,
                     method: 'POST',
-                    data: JSON.stringify(ipdatedContactData),
+                    data: JSON.stringify(updatedContactData),
                     dataType: 'json'
                 }).done(function(result){
                     $('.loaderIcon').remove();
@@ -458,6 +462,114 @@ function editContact(cid){
                 });
             }
         });
+    }
+}
+function deleteContact(cid){
+    $(".fullscreen-container").fadeTo(200, 1);
+    let areaToAppend = $('.popup-form-content');
+    if(areaToAppend.length > 0) {
+
+        var reg = /\d/;
+        if (reg.test(u) && reg.test(cid)) {
+            $.ajax({
+                url: `${domainProtol}//${domainName}/contatos/api/list-one.php?userid=${u}&cid=${cid}`,
+                method: 'GET'
+            }).done(function(result){
+                $('.alert-content').html(
+                    `<h4 class="text-center">Confirmar</h4>
+                    <div class="container mt-5">
+                            <p align="center">Você tem certeza que deseja <span class="text-danger fw-bold fst-italic">apagar</span> o contato de ${result.nome + ' ' + result.sobrenome}?</p>
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn btn-danger w-100 succeed-delete" type="button">Confirmar</button>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-secondary w-100 cancel-delete" type="button">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>`).css('padding', '8px');
+                    $(".cancel-delete").on("click", ()=> {
+                        $(".fullscreen-container").fadeOut(200);
+                    });
+                $('.succeed-delete').on("click", ()=>{
+                    var contactToDelete = {
+                        cid:cid,
+                        userid:u
+                    };
+                    $.ajax({
+                        url:`${domainProtol}//${domainName}/contatos/api/delete.php`,
+                        method: 'DELETE',
+                        data: JSON.stringify(contactToDelete),
+                        dataType: 'json'
+                    }).done(function(result){
+                        if(result.status === 1){
+                            let successMsg = `
+                            <h1 class="pt-2 fw-bold text-center">Editar contato</h1>
+                            <div class="row d-flex justify-content-center">
+                                <img class="check text-center" src="./public/img/check-correct.gif" alt="check-right" style="width:150px; margin-top: 2%;">
+                            </div>
+                            <p align="center" class="response text-center">${result.msg}</p>`;
+
+                            $('.alert-content').empty().html(successMsg);
+
+                        }else if(result.status === 0){
+                            let errorMsg = `<h1 class="pt-2 fw-bold text-center">Erro</h1>
+                            <div class="row d-flex justify-content-center">
+                                <img class="check" src="./public/img/alert.gif" alt="check-right" style="width:150px; margin-top: 2%;">
+                            </div>
+                            <span style="color: red;">
+                                <p align="center">${result.msg}</p>
+                            </span>`;
+
+                            $('.alert-content').empty().html(errorMsg);
+                        }
+
+                        setTimeout(()=>{
+                            $(".fullscreen-container").fadeOut(200);
+                        }, 2200)
+
+                        viewContacts();
+                    }).fail(function(jqXHR, textStatus, errorThrown){
+                        console.error('An error occurred, errorThrown:', errorThrown);
+                        console.error('An error occurred, status:', textStatus);
+                        console.error('An error occurred, jqXHR:', jqXHR);
+
+                        var errors = xhr.responseJSON;
+                        var error = errors.name[0];
+
+                        let errorMsg = `<h1 class="pt-2 fw-bold text-center">Erro</h1><img class="check" src="./public/img/alert.gif" alt="check-right" style="width:150px; margin-top: 2%;"></div><span style="color: red;"><p>${error}</p></span>
+                        `;
+
+                        $('.alert-content').empty().html(errorMsg);
+
+                        setTimeout(()=>{
+                            $(".fullscreen-container").fadeOut(200);
+                        }, 2200)
+
+                        viewContacts();
+                    });
+                })
+
+            }).fail(function(jqXHR, textStatus, errorThrown){
+                console.error('An error occurred, errorThrown:', errorThrown);
+                console.error('An error occurred, status:', textStatus);
+                console.error('An error occurred, jqXHR:', jqXHR);
+
+                var errors = xhr.responseJSON;
+                var error = errors.name[0];
+
+                let errorMsg = `<h1 class="pt-2 fw-bold text-center">Erro</h1><img class="check" src="./public/img/alert.gif" alt="check-right" style="width:150px; margin-top: 2%;"><div class="response"></div><span style="color: red;"><p>${error}</p></span>
+                `;
+
+                $('.alert-content').empty().html(errorMsg);
+
+                setTimeout(()=>{
+                    $(".fullscreen-container").fadeOut(200);
+                }, 2200)
+
+                viewContacts()
+            });
+        }
     }
 }
 viewContacts();
