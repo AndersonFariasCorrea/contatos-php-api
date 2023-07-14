@@ -71,10 +71,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
         $contact->id = $data->cid;
 
         //  Update a contact
-        if($contact->update()){
-            echo json_encode(['status'=> 1, 'msg' => 'contato atualizado com sucesso']);
+        $result = $contact->update();
+        if($result['status'] === 1){
+            echo json_encode($result);
         }else{
-            echo json_encode(['status'=> 0, 'msg' => 'contato não atualizado']);
+            echo json_encode($result);
         }
     }
 }

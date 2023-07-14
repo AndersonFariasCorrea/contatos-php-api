@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'GET') {
         // Convert to Json  and output
         echo json_encode($contact_arr);
     }else{
-       echo json_encode(['msg' => 'Nenhum contato encontrado', 'rows_count'=> $num]);
+       echo json_encode(["query" => ['msg' => 'Nenhum contato encontrado', 'rows_count'=> $num]]);
     }
     exit(http_response_code());
 }

@@ -214,18 +214,20 @@ class Contact{
 
         if($this->validateEmail($this->email)){
             $this->email =  htmlspecialchars(strip_tags($this->email));
-        }else{
-            return false;
+        }else if(! empty($this->email)){
+            return ["status"=> 0, "msg"=> "email não é válido"];
         }
+
         if($this->validateTel($this->telefone)){
             $this->telefone =  htmlspecialchars(strip_tags($this->telefone));
         }else{
-            return false;
+            return ["status"=> 0, "msg"=> "número não é válido"];
         }
+
         if($this->validateTel($this->whatsapp)){
             $this->whatsapp =  htmlspecialchars(strip_tags($this->whatsapp));
-        }else{
-            return false;  
+        }else if(! empty($this->whatsapp)){
+            return ["status"=> 0, "msg"=> "whatsapp não é válido"];
         }
 
         // Bind param
@@ -238,17 +240,13 @@ class Contact{
         $stmt->bindParam(':cid', $this->id);
 
         // Execute query
-        $stmt->execute();
-
-        if($stmt->rowCount() > 0){
-            return true;
-        }else{
-            return false;
+        if($stmt->execute()){
+            return ['status'=> 1, 'msg' => 'contato atualizado com sucesso'];
         }
 
         // Error Handle
-        printf("Error %s. \n", $stmt->error);
-        return false;
+        log_error("Error %s. \n", $stmt->error);
+        return ['status'=> 0, 'msg' => 'unknown'];
     }
     /**
      * Delete a specified contact
@@ -279,9 +277,5 @@ class Contact{
         }else{
             return false;
         }
-
-        // Error Handle
-        printf("Error %s. \n", $stmt->error);
-        return false;
     }
 }

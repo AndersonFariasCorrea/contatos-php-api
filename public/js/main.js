@@ -12,6 +12,8 @@ $.fn.extend({
     } 
 });
 
+let u = $('#userid').text();
+
 let domainProtol = window.location.protocol;
 let domainName = window.location.hostname;
 
@@ -88,7 +90,7 @@ function viewContacts(){
             height: 38px;
         }
         .dropdown-button i{
-            padding: 0px 4px;
+            padding: 0px 2 px;
             position: relative;
             bottom: -6px;
         }
@@ -114,7 +116,7 @@ function viewContacts(){
         <div class="col-11">
             <div class="input-icons">
                 <i class="fa-solid fa-magnifying-glass icon"></i>
-                <input type="email" class="form-control input-fild pesquisa" id="InputEmail" name="fullname"  attern="^[0-9a-zA-Zá-ú\s]+$" aria-describedby="fullnameHelp" placeholder="Pesquisar...">
+                <input type="text" class="form-control input-fild pesquisa" id="InputName" name="fullname"  pattern="^[0-9a-zA-Zá-ú\s]+$" aria-describedby="fullnameHelp" placeholder="Pesquisar...">
             </div>
         </div>
         <div class="col dropdown-button">
@@ -133,7 +135,7 @@ function viewContacts(){
             <thead>
                 <tr>
                     <th class="w-75">Nome</th>
-                    <th>#</th>
+                    <th class="text-center">#</th>
                 </tr>
             </thead>
             <tbody>
@@ -151,16 +153,26 @@ function viewContacts(){
                 url: `${domainProtol}//${domainName}/contatos/api/list.php?userid=${u}&stwith=${seach}`,
                 method: 'GET'
             }).done(function(result){
-                result.data.forEach(el => {
-                    var row = $('<tr>');
-                        var nomeCol = $('<td>')
-                            .text(el.nome + " " + el.sobrenome)
-                            .addClass('w-75');
-                        row.append(nomeCol);
-                        var nomeCol = $('<td>').html(`<a href="#" onclick="viewContact(${el.id})"><i class="fa-regular fa-eye"></i></a>`);
-                        row.append(nomeCol);
-                    $('tbody').append(row);
-                });
+                if(result.query.rows_count && result.query.rows_count !== 0){
+                    result.data.forEach(el => {
+                        var row = $('<tr>');
+                            var nomeCol = $('<td>')
+                                .text(el.nome + " " + el.sobrenome)
+                                .addClass('w-75');
+                            row.append(nomeCol);
+                            var nomeCol = $('<td>').html(`
+                            <a href="#" onclick="viewContact(${el.id})" title="ver contato"> 
+                                <i class="fa-regular fa-eye"></i>
+                            </a>
+                            &nbsp;
+                            <a href="#" onclick="editContact(${el.id})" title="editar contato">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </a>`)
+                            .addClass('text-center');
+                            row.append(nomeCol);
+                        $('tbody').append(row);
+                    });
+                }
             }).fail(function(jqXHR, textStatus, errorThrown){
                 console.error('An error occurred, errorThrown:', errorThrown);
                 console.error('An error occurred, status:', textStatus);
@@ -172,6 +184,7 @@ function viewContacts(){
     listContacts(".popup-form-content");
     
     $('.pesquisa').on('input change', function(){
+        $(this).val().replace(/^[0-9a-zA-Zá-ú\s]+$/, "")
         listContacts(".popup-form-content", $(this).val());
     });  
 }
@@ -194,7 +207,7 @@ function appendCreateContactFrom(areaToAppend){
         <label for="email"></label>
         <input class="form-control" type="email" id="email" name="email" placeholder="Email">
 
-        <div class="row mt-5">
+        <div class="row mt-5 buttons-area">
             <div class="col">
                 <button type="submit" class="submit-contact-action btn btn-primary w-100">Salvar</button>
             </div>
@@ -246,7 +259,7 @@ function newContact(areaAppend){
                         <div class="row d-flex justify-content-center">
                             <img class="check text-center" src="./public/img/check-correct.gif" alt="check-right" style="width:150px; margin-top: 2%;">
                         </div>
-                        <p align="center">${result.msg}</p>
+                        <p align="center" class="response">${result.msg}</p>
                             <div class="row mt-5">
                                 <div class="col">
                                     <button type="button" class="submit-contact-action btn btn-primary w-100" onclick="newContact('.popup-form-content')">Criar novo</button>
@@ -264,7 +277,6 @@ function newContact(areaAppend){
                         $(areaToAppend).html('');
                         $(".response").fadeIn();
                     }
-
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     $('.loaderIcon').remove();
                     if(jqXHR.status && jqXHR.responseJSON){
@@ -292,6 +304,160 @@ function newContact(areaAppend){
         console.log('the area to append the form is invalid');
     }
 }
-//appendCreateContact
-//newContact(".popup-form-content");
+
+function viewContact(cid){
+    let areaToAppend = $('.popup-form-content');
+    if(areaToAppend.length > 0) {
+        // would it be using doom? yep, but i decided not
+        appendCreateContactFrom(areaToAppend);
+
+        $('.action-name').text('Ver Contato')
+
+        $('.buttons-area').empty();
+        
+        $("input").prop("disabled",true);
+
+        $('.buttons-area').html(`<input type="button" class="btn btn-secondary w-100" value="Voltar" onclick="viewContacts()">`);
+
+        var reg = /\d/;
+        if (reg.test(u) && reg.test(cid)) {
+            $.ajax({
+                url: `${domainProtol}//${domainName}/contatos/api/list-one.php?userid=${u}&cid=${cid}`,
+                method: 'GET'
+            }).done(function(result){
+                $('#first-name').val('Nome: ' + result.nome).removeAttr('pattern');
+                $('#last-name').val('Sobrenome: ' + result.sobrenome).removeAttr('pattern');
+                $('#phone').val('Telefone: ' + result.telefone).removeAttr('pattern');
+                $('#whatsapp').val('WhatsApp: ' + result.whatsapp).removeAttr('pattern');
+                $('#email').val('Email: ' + result.email).removeAttr('pattern');
+            }).fail(function(jqXHR, textStatus, errorThrown){
+                console.error('An error occurred, errorThrown:', errorThrown);
+                console.error('An error occurred, status:', textStatus);
+                console.error('An error occurred, jqXHR:', jqXHR);
+            });
+        }
+    }
+}
+
+function editContact(cid){
+    let areaToAppend = $('.popup-form-content');
+    if(areaToAppend.length > 0) {
+        // would it be using doom? yep, but i decided not
+        appendCreateContactFrom(areaToAppend);
+
+        var reg = /\d/;
+        if (reg.test(u) && reg.test(cid)) {
+            $.ajax({
+                url: `${domainProtol}//${domainName}/contatos/api/list-one.php?userid=${u}&cid=${cid}`,
+                method: 'GET'
+            }).done(function(result){
+                $('#first-name').val(result.nome).removeAttr('pattern');
+                $('#last-name').val(result.sobrenome).removeAttr('pattern');
+                $('#phone').val(result.telefone).removeAttr('pattern');
+                $('#whatsapp').val(result.whatsapp).removeAttr('pattern');
+                $('#email').val(result.email).removeAttr('pattern');
+            }).fail(function(jqXHR, textStatus, errorThrown){
+                console.error('An error occurred, errorThrown:', errorThrown);
+                console.error('An error occurred, status:', textStatus);
+                console.error('An error occurred, jqXHR:', jqXHR);
+            });
+        }
+        
+        $('.action-name').text('Editar contato');
+
+        $('.submit-contact-action').on("click", ()=>{
+            let n = $('#first-name').val();
+            let s = $('#last-name').val();
+            let e = $('#email').val();
+            let p = $('#phone').val();
+            let w = $('#whatsapp').val();
+            let u = $('#userid').text();
+
+            if (reg.test(u) && reg.test(cid)) {
+                popUpWait(areaToAppend);
+                $('.submit-contact-action').css("display", "none");
+                var ipdatedContactData = {
+                    nome:n,
+                    sobrenome:s,
+                    telefone:p,
+                    whatsapp:w,
+                    email:e,
+                    cid:cid,
+                    userid:u
+                };
+                $.ajax({
+                    url:`${domainProtol}//${domainName}/contatos/api/update.php`,
+                    method: 'POST',
+                    data: JSON.stringify(ipdatedContactData),
+                    dataType: 'json'
+                }).done(function(result){
+                    $('.loaderIcon').remove();
+                    if(result.status === 1){
+                        $(areaToAppend).html(`<h1 class="pt-2 fw-bold text-center">Editar contato</h1>
+                        <div class="row d-flex justify-content-center">
+                            <img class="check text-center" src="./public/img/check-correct.gif" alt="check-right" style="width:150px; margin-top: 2%;">
+                        </div>
+                        <p align="center" class="response text-center">${result.msg}</p>
+                            <div class="row mt-5">
+                                <div class="col">
+                                    <button type="button" class="submit-contact-action btn btn-primary w-100" onclick="viewContact(${cid})">Ver</button>
+                                </div>
+                                <div class="col">
+                                    <button type="button" class="cancel-contact-action btn btn-secondary w-100" onclick="viewContacts()">Voltar</button>
+                                </div>
+                            </div>
+                        `);
+                        setTimeout(()=>{
+                            $(".check").attr('src','./public/img/check-correct.PNG');
+                        }, 2200)
+                        $(".response").fadeIn();
+                    }
+                    if(result.status === 0){
+                        $(areaToAppend).html(`<h1 class="pt-2 fw-bold text-center">Erro</h1>
+                        <div class="row d-flex justify-content-center">
+                            <img class="check" src="./public/img/alert.gif" alt="check-right" style="width:150px; margin-top: 2%;"><div class="response">
+                        </div>
+                        <span style="color: red;">
+                            <p align="center">${result.msg}</p>
+                        </span>
+                        <div class="row mt-5 buttons-area">
+                            <div class="col">
+                                <button type="submit" class="submit-contact-action btn btn-primary w-100" onclick="editContact(${cid})">Tentar Novamente</button>
+                            </div>
+                            <div class="col">
+                                <button type="button" class="cancel-contact-action btn btn-danger w-100" onclick="viewContacts()">Cancelar</button>
+                            </div>
+                        </div>
+                        `);
+                        setTimeout(()=>{
+                            $(".check").attr('src','./public/img/alert.PNG');
+                        }, 2200)
+                        $(".response").fadeIn();
+                    }
+                }).fail(function(jqXHR, textStatus, errorThrown){
+                    console.error('An error occurred, errorThrown:', errorThrown);
+                    console.error('An error occurred, status:', textStatus);
+                    console.error('An error occurred, jqXHR:', jqXHR);
+
+                    var errors = xhr.responseJSON;
+                    var error = errors.name[0];
+
+                    $(areaToAppend).html(`<h1 class="pt-2 fw-bold text-center">Erro</h1><img class="check" src="./public/img/alert.gif" alt="check-right" style="width:150px; margin-top: 2%;"><div class="response"></div><span style="color: red;"><p>${error}</p></span>
+                        <div class="row mt-5">
+                            <div class="col">
+                                <button type="button" class="submit-contact-action btn btn-primary w-100" onclick="editContact(${cid})">Tentar novamente</button>
+                            </div>
+                            <div class="col">
+                                <button type="button" class="cancel-contact-action btn btn-danger w-100" onclick="viewContacts()>Cancelar</button>
+                            </div>
+                        </div>
+                    `);
+                    setTimeout(()=>{
+                        $(".check").attr('src','./public/img/alert.PNG');
+                    }, 2200)
+                });
+            }
+        });
+    }
+}
 viewContacts();

@@ -2,6 +2,9 @@
   font-family: 'Roboto', Sans-serif;
   color: #534a4a;
 }
+a{
+  text-decoration: none;
+}
 :root {
   --first-color: #84b5dd;
   --second-color: #cbe9f1;
@@ -69,6 +72,9 @@ body{
     height: 100vh;
   }
 }
+.fa-regular:hover{
+  color: #fd4b2c;
+}
 
   /* Scroll side bar*/
 
@@ -76,12 +82,13 @@ body{
 ::-webkit-scrollbar {
   width: 10px; /* Set the width of the scrollbar */
 }
-
 ::-webkit-scrollbar-track {
   background-color: var(--second-color); /* Set the background color of the track */
   border-radius: 8px;
 }
-
+::-webkit-scrollbar-thumb:active{
+  cursor: pointer;
+}
 /* Customize the scrollbar thumb */
 ::-webkit-scrollbar-thumb {
   background-color: var(--first-color); 
