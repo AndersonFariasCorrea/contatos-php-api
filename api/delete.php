@@ -20,10 +20,16 @@ if ($_SERVER['REQUEST_METHOD'] != 'DELETE') {
     $data = json_decode(file_get_contents("php://input"));
 
     // Validate and set searched contact id
-    $contact->id = isset($data->cid) && preg_match("/\d/", $data->cid) ? $data->cid : exit(http_response_code(400));
+    $contact->id = isset($data->cid) && preg_match("/\d/", $data->cid) ? $data->cid : null;
+    if($contact->id === null){
+        http_response_code(400);
+    }
 
     // Add uset auth here
-    $contact->userid = isset($data->userid) && preg_match("/\d/", $data->userid) ? $data->userid : exit(http_response_code(401));
+    $contact->userid = isset($data->userid) && preg_match("/\d/", $data->userid) ? $data->userid : null;
+    if($contact->userid === null){
+        http_response_code(401);
+    }
 
     //create contact
     if($contact->delete()){
