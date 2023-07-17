@@ -44,7 +44,7 @@
         <div class="container mt-5">
             <div class="row">
                 <p>
-                <span class="error">Você não está autorizado a acessar esta página.</span> Por favor faça <a href="/sisfan/entrar/">log-in</a>.
+                <span class="error">Você não está autorizado a acessar esta página.</span> Por favor faça <a href="/entrar/">log-in</a>.
                 </p>
             </div>
         </div>
