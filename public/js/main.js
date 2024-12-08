@@ -16,6 +16,7 @@ let u = $('#userid').text();
 
 let domainProtol = window.location.protocol;
 let domainName = window.location.hostname;
+let domainPort = window.location.port == '80' ? '' : `:${window.location.port}`;
 
 $(document).ready(()=>{
     $('h1').disableSelection();
@@ -150,7 +151,7 @@ function viewContacts(){
             let u = $('#userid').text();
 
             $.ajax({
-                url: `${domainProtol}//${domainName}/contatos/api/list.php?userid=${u}&stwith=${seach}`,
+                url: `${domainProtol}//${domainName}${domainPort}/api/list.php?userid=${u}&stwith=${seach}`,
                 method: 'GET'
             }).done(function(result){
                 if(result.query.rows_count && result.query.rows_count !== 0){
@@ -252,7 +253,7 @@ function newContact(areaAppend){
                     userid:u
                 };
                 $.ajax({
-                    url:`${domainProtol}//${domainName}/contatos/api/create.php`,
+                    url:`${domainProtol}//${domainName}${domainPort}/api/create.php`,
                     method: 'PUT',
                     data: JSON.stringify(newContactData),
                     dataType: 'json'
@@ -274,7 +275,7 @@ function newContact(areaAppend){
                             </div>
                         `);
                         setTimeout(()=>{
-                            $(".check").attr('src','./public/img/check-correct.PNG');
+                            $(".check").attr('src','./public/img/check-correct.png');
                         }, 2200)
                     }
                     if(result.status === 0){
@@ -295,7 +296,7 @@ function newContact(areaAppend){
                             </div>
                         `);
                         setTimeout(()=>{
-                            $(".check").attr('src','./public/img/alert.PNG');
+                            $(".check").attr('src','./public/img/alert.png');
                         }, 2200)
                     }
                     console.error('An error occurred, errorThrown:', errorThrown);
@@ -326,7 +327,7 @@ function viewContact(cid){
         var reg = /\d/;
         if (reg.test(u) && reg.test(cid)) {
             $.ajax({
-                url: `${domainProtol}//${domainName}/contatos/api/list-one.php?userid=${u}&cid=${cid}`,
+                url: `${domainProtol}//${domainName}${domainPort}/api/list-one.php?userid=${u}&cid=${cid}`,
                 method: 'GET'
             }).done(function(result){
                 $('#first-name').val('Nome: ' + result.nome).removeAttr('pattern');
@@ -352,7 +353,7 @@ function editContact(cid){
         var reg = /\d/;
         if (reg.test(u) && reg.test(cid)) {
             $.ajax({
-                url: `${domainProtol}//${domainName}/contatos/api/list-one.php?userid=${u}&cid=${cid}`,
+                url: `${domainProtol}//${domainName}${domainPort}/api/list-one.php?userid=${u}&cid=${cid}`,
                 method: 'GET'
             }).done(function(result){
                 $('#first-name').val(result.nome).removeAttr('pattern');
@@ -390,7 +391,7 @@ function editContact(cid){
                     userid:u
                 };
                 $.ajax({
-                    url:`${domainProtol}//${domainName}/contatos/api/update.php`,
+                    url:`${domainProtol}//${domainName}${domainPort}/api/update.php`,
                     method: 'POST',
                     data: JSON.stringify(updatedContactData),
                     dataType: 'json'
@@ -412,7 +413,7 @@ function editContact(cid){
                             </div>
                         `);
                         setTimeout(()=>{
-                            $(".check").attr('src','./public/img/check-correct.PNG');
+                            $(".check").attr('src','./public/img/check-correct.png');
                         }, 2200)
                         $(".response").fadeIn();
                     }
@@ -434,7 +435,7 @@ function editContact(cid){
                         </div>
                         `);
                         setTimeout(()=>{
-                            $(".check").attr('src','./public/img/alert.PNG');
+                            $(".check").attr('src','./public/img/alert.png');
                         }, 2200)
                         $(".response").fadeIn();
                     }
@@ -457,7 +458,7 @@ function editContact(cid){
                         </div>
                     `);
                     setTimeout(()=>{
-                        $(".check").attr('src','./public/img/alert.PNG');
+                        $(".check").attr('src','./public/img/alert.png');
                     }, 2200)
                 });
             }
@@ -472,7 +473,7 @@ function deleteContact(cid){
         var reg = /\d/;
         if (reg.test(u) && reg.test(cid)) {
             $.ajax({
-                url: `${domainProtol}//${domainName}/contatos/api/list-one.php?userid=${u}&cid=${cid}`,
+                url: `${domainProtol}//${domainName}${domainPort}/api/list-one.php?userid=${u}&cid=${cid}`,
                 method: 'GET'
             }).done(function(result){
                 $('.alert-content').html(
@@ -497,7 +498,7 @@ function deleteContact(cid){
                         userid:u
                     };
                     $.ajax({
-                        url:`${domainProtol}//${domainName}/contatos/api/delete.php`,
+                        url:`${domainProtol}//${domainName}${domainPort}/api/delete.php`,
                         method: 'DELETE',
                         data: JSON.stringify(contactToDelete),
                         dataType: 'json'

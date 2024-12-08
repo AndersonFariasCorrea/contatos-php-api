@@ -2,9 +2,9 @@
 <?php
 
     $auth = array(
-        "username"=> "Anderson",
+        "username"=> "Admin",
         "logged"=> true,
-        "userid"=> 5
+        "userid"=> 1
     );
 
 ?>
